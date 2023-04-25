@@ -197,6 +197,8 @@ class _MarkdownAutoPreviewState extends State<MarkdownAutoPreview> {
   @override
   void initState() {
     _focused = widget.focused;
+    if (_focused == true) _textFieldFocusNode.requestFocus();
+
     _internalController = widget.controller ?? TextEditingController();
 
     _toolbar = Toolbar(
