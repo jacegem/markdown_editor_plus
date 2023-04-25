@@ -27,8 +27,11 @@ class MarkdownAutoPreview extends StatefulWidget {
     this.textCapitalization = TextCapitalization.sentences,
     this.readOnly = false,
     this.expands = false,
+    this.focused = false,
     this.decoration = const InputDecoration(isDense: true),
   }) : super(key: key);
+
+  final bool focused;
 
   /// Markdown syntax to reset the field to
   ///
@@ -184,17 +187,16 @@ class _MarkdownAutoPreviewState extends State<MarkdownAutoPreview> {
   // Internal parameter
   late TextEditingController _internalController;
 
-  final FocusScopeNode _internalFocus =
-      FocusScopeNode(debugLabel: '_internalFocus');
-  final FocusNode _textFieldFocusNode =
-      FocusNode(debugLabel: '_textFieldFocusNode');
+  final FocusScopeNode _internalFocus = FocusScopeNode(debugLabel: '_internalFocus');
+  final FocusNode _textFieldFocusNode = FocusNode(debugLabel: '_textFieldFocusNode');
 
   late Toolbar _toolbar;
 
-  bool _focused = false;
+  late bool _focused;
 
   @override
   void initState() {
+    _focused = widget.focused;
     _internalController = widget.controller ?? TextEditingController();
 
     _toolbar = Toolbar(
@@ -217,10 +219,8 @@ class _MarkdownAutoPreviewState extends State<MarkdownAutoPreview> {
   Widget build(BuildContext context) {
     return FocusableActionDetector(
       shortcuts: {
-        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyB):
-            BoldTextIntent(),
-        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyI):
-            ItalicTextIntent(),
+        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyB): BoldTextIntent(),
+        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyI): ItalicTextIntent(),
       },
       actions: {
         BoldTextIntent: CallbackAction<BoldTextIntent>(
@@ -268,9 +268,7 @@ class _MarkdownAutoPreviewState extends State<MarkdownAutoPreview> {
                 alignment: Alignment.centerLeft,
                 child: MarkdownBody(
                   key: const ValueKey<String>("zmarkdown-parse-body"),
-                  data: _internalController.text == ""
-                      ? "_Markdown text_"
-                      : _internalController.text,
+                  data: _internalController.text == "" ? "_Markdown text_" : _internalController.text,
                 ),
               ),
             ),
